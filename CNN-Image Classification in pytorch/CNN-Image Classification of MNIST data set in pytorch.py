@@ -28,19 +28,17 @@ train_set = torchvision.datasets.FashionMNIST(
     ,download=True 
     ,transform=transforms.Compose([
         transforms.ToTensor()
-        #normalize
     ])
 )
 
 loader = DataLoader(train_set, batch_size = len(train_set), num_workers = 1)
 
-train_set_normal = torchvision.datasets.FashionMNIST(root='./data', train=True, download=True, 
-                                                     transform=transforms.Compose([transforms.ToTensor(),transforms.Normalize(mean, std)]))
+train_set_normal = torchvision.datasets.FashionMNIST(root='./data', train=True, download=True, transform=transforms.Compose([transforms.ToTensor(),transforms.Normalize(mean, std)]))
 
 loader = DataLoader(train_set, batch_size = len(train_set), num_workers = 1)
 
 class RunBuilder():
-    @staticmethod #The main thing to note about using this class is that it has a static method called get_runs(). This method will get the runs for us that it builds based on the parameters we pass in.
+    @staticmethod 
     def get_runs(params):
 
         Run = namedtuple('Run', params.keys())
@@ -65,7 +63,6 @@ class Network(nn.Module):
         self.fc1 = nn.Linear(in_features=12 * 4 * 4, out_features=120)
         self.fc2 = nn.Linear(in_features=120, out_features=60)
         self.out = nn.Linear(in_features=60, out_features=10)
-
 
     def forward(self, t):
         
@@ -95,8 +92,6 @@ class Network(nn.Module):
         t = self.out(t)
         return t
 
-
-
 class RunManager():
 
     def __init__(self):
@@ -114,12 +109,6 @@ class RunManager():
         self.network = None #save network
         self.loader = None #save data loader for run
         self.tb = None #summarywriter for tensorboard
-
-
-#Anytime we see this, we need to be thinking about removing these prefixes. (epoch_count, epoch_loss, ....)
-# Data that belongs together should be together. 
-# This is done by encapsulating the data inside of a class.
-#this is done in next cell
 
     def begin_run(self, run, network, loader):
 
@@ -196,12 +185,10 @@ class RunManager():
         pd.DataFrame.from_dict(self.run_data, orient='columns').to_csv(f'{fileName}.csv')
         with open(f'{fileName}.json', 'w', encoding='utf-8') as f:json.dump(self.run_data, f, ensure_ascii=False, indent=4)
 
-
 trainsets = {
     'not_normal' : train_set,
     'normal' : train_set_normal
 }
-
 
 params = OrderedDict(
     lr = [.01]
